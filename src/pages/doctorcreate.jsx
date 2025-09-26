@@ -214,7 +214,7 @@ export default function doctoradd() {
 
             toast.success("Doctor registered successfully!");
             setTimeout(() => {
-                navigate(`/${encryptRoute("doctor")}`);
+                navigate(`/${encryptRoute("doctor")}/${encryptRoute("doctor")}`);   
             }, 500);
         } catch (error) {
             console.error("Error adding Registration:", error);

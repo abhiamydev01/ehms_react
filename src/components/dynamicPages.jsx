@@ -3,6 +3,7 @@ import { decryptRoute } from "./routeEncryptor";
 
 import DashboardHome from "../pages/DashboardHome";
 import Doctor from "../pages/doctor";
+import DoctoerPatient from "../pages/doctorPatient";
 import Nurse from "../pages/nurse";
 import Appointment from "../pages/appoinment";
 import Patient from "../pages/patient";
@@ -22,6 +23,12 @@ import DocSchedule from "../pages/docschedule";
 import DocsheduleAdd from "../pages/docscheduleadd";
 import Gvrlist from "../pages/gvr";
 import GvrAdd from "../pages/gvrAdd";
+import Patientenrroll from "../pages/patientenr";
+import AppointmentAdd from "../pages/appointAdd";
+import AppointmentView from "../pages/appointView";  
+import PaymentHistory from "../pages/paymentDoctorHistory"
+import PatientProfile from "../pages/patientProfile"
+
  
  
 
@@ -34,13 +41,20 @@ export default function DynamicPage() {
   if (!main) return <Navigate to="/" replace />;
 
   if (main === "dashboard" && !sub) return <DashboardHome />;
-  if (main === "doctor") return <Doctor />;
-  if (main === "create-doctor") return <DoctorAdd />;
-  if (main === "doc-schedule") return <DocSchedule />;
-  if (main === "create-docshedule") return <DocsheduleAdd />;
+  if (main === "doctorPatient") return <DoctoerPatient />;
+  // if (main === "create-doctor") return <DoctorAdd />;
+  // if (main === "doc-schedule") return <DocSchedule />;
+  // if (main === "create-docshedule") return <DocsheduleAdd />;
+   if (main === "appointment") return <Appointment />;
+   if (main === "docpayhistory") return <PaymentHistory />;
+
+  if (main === "patient") return <Patient />;
+  if (main === "patient-enroll") return <Patientenrroll />;
   if (main === "create-nurse") return <NurseAdd />;
+   if (main === "patientProfile") return <PatientProfile />;
+ 
   if (main === "nurse" && !sub) return <Nurse />;
-  if (main === "nurse" && sub === "appointment") return <Appointment />;
+  // if (main === "nurse" && sub === "appointment") return <Appointment />;
   if (main === "nurse" && sub === "patient") return <Patient />;
   if (main === "nurse" && sub === "prescription") return <Prescription />;
   if (main === "master" && sub === "hospital") return <Hospital />;
@@ -53,6 +67,15 @@ export default function DynamicPage() {
   if (main === "master" && sub === "create-specialization") return <SpecialAdd />;
   if (main === "master" && sub === "create-gvr") return <GvrAdd />;
   if (main === "master" && sub === "gvr") return <Gvrlist />;
+
+  if (main === "doctor" && sub === "doctor") return <Doctor />;
+  if (main === "doctor" && sub === "create-doctor") return <DoctorAdd />;
+  if (main === "doctor" && sub === "doc-schedule") return <DocSchedule />;
+  if (main === "doctor" && sub === "create-docshedule") return <DocsheduleAdd />;
+  if (main === "doctor" && sub === "appointment") return <Appointment />;
+  if (main === "doctor" && sub === "appointAdd") return <AppointmentAdd />;
+  if (main === "doctor" && sub === "appointView") return <AppointmentView />;
+ 
 
 
   return <Navigate to="/" replace />;

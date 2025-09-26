@@ -218,7 +218,7 @@ export default function hospitaladd() {
                             />
                         </div>
 
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-600 text-left mb-1">
                                 Saturday Policy  
                             </label>
@@ -229,7 +229,7 @@ export default function hospitaladd() {
                              />
 
 
-                        </div>
+                        </div> */}
 
                         <div>
                             <label className="block text-sm font-medium text-gray-600 text-left mb-1">

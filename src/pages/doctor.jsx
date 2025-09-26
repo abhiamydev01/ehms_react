@@ -16,6 +16,8 @@ const TransactionsTable = () => {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
     const [searchText, setSearchText] = useState("");
+    const role = localStorage.getItem("role"); 
+
 
 const fetchTransactions = async () => {
   setLoading(true);
@@ -97,12 +99,14 @@ const fetchTransactions = async () => {
                     />
                 </div>
                 <NavLink
-                    to={`/${encryptRoute("create-doctor")}`}
+                    to={`/${encryptRoute("doctor")}/${encryptRoute("create-doctor")}`}  
+
                 >
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded-sm hover:border border-blue-500 hover:text-blue-500 hover:bg-transparent cursor-pointer flex items-center justify-center gap-1">
+                  {role === "admin" && (
+                      <button className="bg-blue-500 text-white px-2 py-1 rounded-sm hover:border border-blue-500 hover:text-blue-500 hover:bg-transparent cursor-pointer flex items-center justify-center gap-1">
                         <LuCirclePlus />
                         <span className="text-sm font-medium">Add</span>
-                    </button>
+                    </button>)}
                 </NavLink>
             </div>
 

@@ -15,7 +15,7 @@ const CustomDataTable = ({
   columns={columns}
   data={data}
   highlightOnHover
-  pagination
+ // pagination
   paginationServer={paginationServer}
   paginationTotalRows={paginationTotalRows}
   onChangePage={onPageChange}

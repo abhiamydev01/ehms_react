@@ -5,7 +5,6 @@ import { encryptRoute } from "./../components/routeEncryptor";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ApiServices from "../utils/ApiServices";
 
-
 function Signin() {
   const navigate = useNavigate();
   const [emailOrPhone, setEmail] = useState("");
@@ -13,59 +12,59 @@ function Signin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    if (!emailOrPhone) {
-      setLoading(false);
-      return toast.error("Please fill enter email");
+  if (!emailOrPhone) {
+    setLoading(false);
+    return toast.error("Please enter email or phone");
+  }
+  if (!password) {
+    setLoading(false);
+    return toast.error("Please enter password");
+  }
 
-    }
-    if (!password) {
-      setLoading(false);
-      return toast.error("Please fill enter password");
-    }
-
-    const payload = {
-      emailOrPhone: emailOrPhone,
-      password: password,
-    }
-    try {
-      const response = await ApiServices.signIn(payload);
-
-      const data = response.data;
-      console.log("Login response:", response);
-
-      if (response.status && data.success) {
-
-
-
-        if (data.role === "admin") {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("role", data.role);
-          localStorage.setItem("userId", data.id);
-          localStorage.setItem("name", data.name);
-          localStorage.setItem("email", data.email);
-
-          toast.success("Login successful ");
-          navigate(`/${encryptRoute("dashboard")}`);
-        } else {
-          toast.error("Access denided.");
-          setLoading(false);
-        }
-        // else if (data.role === "nurse") navigate("/dashboard/nurse/appointment");
-        // else if (data.role === "doctor") navigate("/dashboard/doctor");
-      } else {
-        toast.error(data.message || "Invalid credentials");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Something went wrong. Try again!");
-      setLoading(false);
-    }
+  const payload = {
+    emailOrPhone,
+    password,
   };
+
+  try {
+    const response = await ApiServices.signIn(payload);
+    const data = response.data;
+    console.log("Login response:", response);
+
+    if (response.status === 200) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+      localStorage.setItem("userId", data.id);
+      localStorage.setItem("name", data.name);
+      localStorage.setItem("email", data.email);
+      localStorage.setItem("id", data.id);
+      localStorage.setItem("phone", data.phone);
+
+      toast.success(data.message || "Login successful");
+      navigate(`/${encryptRoute("dashboard")}`);
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+
+    // ✅ yahan status check karo
+    if (error.response) {
+      if (error.response.status === 400) {
+        toast.error(error.response.data?.message || "Invalid credentials");
+      } else {
+        toast.error(error.response.data?.message || "Something went wrong!");
+      }
+    } else {
+      toast.error("Network error, please try again!");
+    }
+
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 to-white">

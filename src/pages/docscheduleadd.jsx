@@ -33,7 +33,7 @@ const Appointment = [
 
 
 export default function scheduleadd() {
-    
+
     const [hospital, setHospitals] = useState([]);
     const [selectedHospital, setSelectedHospital] = useState(null);
     const [loadingDoctors, setLoadingDoctors] = useState(false);
@@ -134,7 +134,7 @@ export default function scheduleadd() {
             const res = await ApiServices.addDoctorSlot(payload);
             console.log("Slot Added Successfully:", res.data);
             toast.success("Slot added successfully!"); setTimeout(() => {
-                navigate(`/${encryptRoute("doc-schedule")}`);
+                navigate(`/${encryptRoute("doctor")}/${encryptRoute("doc-schedule")}`);
             }, 0);
         } catch (error) {
             console.error("Error adding slot:", error);
@@ -168,7 +168,7 @@ export default function scheduleadd() {
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                       
+
 
                         <div>
                             <label className="block text-sm font-medium text-gray-600 text-left mb-1">
@@ -225,7 +225,7 @@ export default function scheduleadd() {
 
                         </div>
 
-                         <div>
+                        <div>
                             <label className="block text-sm font-medium text-gray-600 text-left mb-1">
                                 Appointment Type <span className="text-red-500 font-bold">*</span>
                             </label>
@@ -284,13 +284,13 @@ export default function scheduleadd() {
                             />
                         </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-1">
-                        <label className="block text-sm font-medium text-gray-600 text-left mb-1">
-                            Location <span className="text-red-500 font-bold">*</span>
-                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-1">
+                            <label className="block text-sm font-medium text-gray-600 text-left mb-1">
+                                Location <span className="text-red-500 font-bold">*</span>
+                            </label>
 
 
-                         <input
+                            <input
                                 type="text"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
@@ -298,18 +298,18 @@ export default function scheduleadd() {
                                 className="form-input"
                                 required
                             />
-                        
+
+
+
+                        </div>
+
+
 
 
                     </div>
 
 
-                       
 
-                    </div>
-
-
-                   
 
 
                     <div className="flex justify-end mt-4">

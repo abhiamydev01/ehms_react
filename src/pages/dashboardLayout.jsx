@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation, useParams,useNavigate   } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useParams, useNavigate } from "react-router-dom";
 import { encryptRoute, decryptRoute } from "./../components/routeEncryptor";
-import { FaUserMd, FaUserClock, FaUserNurse, FaUsersCog, FaHome } from "react-icons/fa";
+import { FaUserMd, FaUserClock, FaUserNurse, FaUsersCog, FaHome,FaUserInjured,FaCalendarAlt,FaCreditCard    } from "react-icons/fa";
 import {
   LuLayoutGrid,
   LuChevronDown,
@@ -23,13 +23,16 @@ const notifications = [
 const TITLES = {
   dashboard: "Dashboard",
   doctor: "Doctor",
-  "create-doctor": "Add Doctor",
+
   "create-nurse": "Add Nurse",
   "nurse": "Nurse",
+  "docpayhistory": "Payment History",
+
   "doc-schedule": "Schedule",
-  "create-docshedule": "Add Schedule",
-  "nurse-appointment": "Appointment",
-  "nurse-patient": "Patient",
+  "doctor-create-docshedule": "Add Schedule",
+  // "nurse-appointment": "Appointment",
+  "patient": "Patient",
+  "patient-enroll": "Patient Enrollment",
   "nurse-prescription": "Prescription",
   "master-hospital": "Hospital",
   "master-department": "Department",
@@ -40,6 +43,13 @@ const TITLES = {
   "master-specialization": "Specialization",
   "master-gvr": "Gvr",
   "master-create-gvr": "Gvr Add",
+  "doctor-doctor": "Doctors",
+  "doctorPatient": "Doctors",
+  "doctor-doc-schedule": "Doctor Schedule",
+  "doctor-appointment": "Appointments",
+  "doctor-appointAdd": "Add Appointments ",
+  "doctor-create-doctor": "Add Doctor",
+  "patientProfile":"Patient Profile"
 
 };
 
@@ -53,6 +63,10 @@ export default function DashboardLayout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [nurseMenuOpen, setNurseMenuOpen] = useState(false);
   const [masterMenuOpen, setMasterMenuOpen] = useState(false);
+  const [doctorMenuOpen, setDoctorMenuOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
+  const role = localStorage.getItem("role");
+
 
   const notifyRef = useRef(null);
   const profileRef = useRef(null);
@@ -64,12 +78,16 @@ export default function DashboardLayout() {
   const sub = subEncrypted ? decryptRoute(subEncrypted) : null;
 
   // 🏷️ Compute a key for titles based on decrypted values
-  const titleKey =
-    main === "nurse" && sub
-      ? `nurse-${sub}`
-      : main === "master" && sub
-        ? `master-${sub}`
-        : main || "";
+
+  const prefixes = {
+    nurse: "nurse",
+    master: "master",
+    doctor: "doctor",
+     
+  };
+  const titleKey = sub && prefixes[main]
+    ? `${prefixes[main]}-${sub}`
+    : main || "";
 
   const headerTitle = TITLES[titleKey] || "EHMS";
 
@@ -77,7 +95,7 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     // 🔹 Clear stored auth data
-    localStorage.removeItem("token"); 
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     // 🔹 Redirect to login page
@@ -111,37 +129,38 @@ export default function DashboardLayout() {
   useEffect(() => {
     setNurseMenuOpen(main === "nurse");
     setMasterMenuOpen(main === "master");
+    setDoctorMenuOpen(main === "doctor");
   }, [main, location.pathname]);
 
   const NavItem = ({ icon: Icon, label, to, matchKey, sidebarOpen }) => {
-  // matchKey is used to check against decrypted "main"
-  const isActive = main === matchKey;
+    // matchKey is used to check against decrypted "main"
+    const isActive = main === matchKey;
 
-  return (
-    <li className="relative group my-2 rounded-r">
-      <NavLink
-        to={to}
-        className={classNames(
-          "flex items-center text-sm font-medium rounded-r transition-colors",
-          sidebarOpen ? "justify-start gap-3 px-3 py-2" : "justify-center p-2",
-          isActive
-            ? "bg-gray-100 text-blue-600 border-l-4 border-blue-500"
-            : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+    return (
+      <li className="relative group my-2 rounded-r">
+        <NavLink
+          to={to}
+          className={classNames(
+            "flex items-center text-sm font-medium rounded-r transition-colors",
+            sidebarOpen ? "justify-start gap-3 px-3 py-2" : "justify-center p-2",
+            isActive
+              ? "bg-gray-100 text-blue-600 border-l-4 border-blue-500"
+              : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+          )}
+        >
+          <Icon className="w-5 h-5 shrink-0" />
+          {sidebarOpen && <span className="truncate">{label}</span>}
+        </NavLink>
+
+        {/* Tooltip when sidebar is collapsed */}
+        {!sidebarOpen && (
+          <span className="pointer-events-none absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 shadow">
+            {label}
+          </span>
         )}
-      >
-        <Icon className="w-5 h-5 shrink-0" />
-        {sidebarOpen && <span className="truncate">{label}</span>}
-      </NavLink>
-
-      {/* Tooltip when sidebar is collapsed */}
-      {!sidebarOpen && (
-        <span className="pointer-events-none absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 shadow">
-          {label}
-        </span>
-      )}
-    </li>
-  );
-};
+      </li>
+    );
+  };
 
 
 
@@ -158,7 +177,7 @@ export default function DashboardLayout() {
           "bg-white shadow-xs flex flex-col py-4 border-r border-gray-200 transition-all duration-300 overflow-hidden fixed inset-y-0 z-40 lg:static",
           sidebarOpen ? "w-64 left-0" : "-left-64 lg:w-16 lg:left-0"
         )}
-      >
+        >
         {/* Sidebar Header */}
         <div className="border-b border-gray-200 shadow-xs pb-3 mb-5 flex items-center justify-between px-4">
           {sidebarOpen ? (
@@ -173,62 +192,169 @@ export default function DashboardLayout() {
 
         {/* Navigation */}
         <nav className="px-3">
-          <ul className="space-y-1">
-            {/* 🔐 Encrypted top-level links */}
-          
+          <ul className="space-y-1"> 
+
             <NavItem
-  icon={FaHome}
-  label="Dashboard"
-  to={`/${encryptRoute("dashboard")}`}
-  matchKey="dashboard"
-  sidebarOpen={sidebarOpen}
-/>
-<NavItem
-  icon={FaUserMd}
-  label="Doctor"
-  to={`/${encryptRoute("doctor")}`}
-  matchKey="doctor"
-  sidebarOpen={sidebarOpen}
-/>
-<NavItem
-  icon={FaUserClock}
-  label="Doctor Schedule"
-  to={`/${encryptRoute("doc-schedule")}`}
-  matchKey="doc-schedule"
-  sidebarOpen={sidebarOpen}
-/>
-<NavItem
-  icon={FaUserNurse}
-  label="Nurse"
-  to={`/${encryptRoute("nurse")}`}
-  matchKey="nurse"
-  sidebarOpen={sidebarOpen}
-/>
+              icon={FaHome}
+              label="Dashboard"
+              to={`/${encryptRoute("dashboard")}`}
+              matchKey="dashboard"
+              sidebarOpen={sidebarOpen}
+            />
+            { role==='patient' &&(
+            <NavItem
+              icon={FaUserMd}
+              label="Doctor"
+              to={`/${encryptRoute("doctorPatient")}`}
+              matchKey="doctorPatient"
+              sidebarOpen={sidebarOpen}
+            /> 
 
+            )}
 
-           
+         {( role==='patient' || role === "doctor") &&(
+            <NavItem
+              icon={FaCalendarAlt }
+              label="Appointments"
+              to={`/${encryptRoute("appointment")}`}
+              matchKey="appointment"
+              sidebarOpen={sidebarOpen}
+            /> 
+            )}
 
-            {/* Master Setup Menu */}
-            <li className="rounded-r">
-              <button
-  type="button"
-  onClick={() => setMasterMenuOpen(v => !v)}
-  className={classNames(
-    "w-full text-left flex items-center text-sm font-medium rounded-r",
-    sidebarOpen ? "justify-between px-3 py-2" : "justify-center p-2",
-    main === "master" ? "bg-gray-100 text-blue-600 border-l-4 border-blue-500" : "text-gray-600 hover:bg-gray-100"
-  )}
->
-  <div className={classNames("flex items-center", sidebarOpen && "gap-3")}>
-    <FaUsersCog className="w-5 h-5 shrink-0" />
-    {sidebarOpen && <span className="truncate">Master Setup</span>}
-  </div>
-  {sidebarOpen && (masterMenuOpen ? <LuChevronUp className="w-4 h-4" /> : <LuChevronDown className="w-4 h-4" />)}
-</button>
+             { role === "doctor" &&(
+            <NavItem
+              icon={FaCreditCard }
+              label="Payment History"
+              to={`/${encryptRoute("docpayhistory")}`}
+              matchKey="docpayhistory"
+              sidebarOpen={sidebarOpen}
+            /> 
+            )}
+            
+
+           {/*  <NavItem
+              icon={FaUserClock}
+              label="Doctor Schedule"
+              to={`/${encryptRoute("doc-schedule")}`}
+              matchKey="doc-schedule"
+              sidebarOpen={sidebarOpen}
+            />*/}
+           { role==='admin' &&(
+              <NavItem
+                icon={FaUserNurse}
+                label="Nurse"
+                to={`/${encryptRoute("nurse")}`}
+                matchKey="nurse"
+                sidebarOpen={sidebarOpen}
+              />)}
+          
+
 
             
 
-              {sidebarOpen && masterMenuOpen && (
+
+
+
+            {/* doctor Setup Menu */}
+            {(role === "admin"|| role === "nurse")&&(
+            <li className="rounded-r">
+              <button
+                type="button"
+                onClick={() => setOpenMenu(openMenu === "doctor" ? null : "doctor")}
+                className={classNames(
+                  "w-full text-left flex items-center text-sm font-medium rounded-r",
+                  sidebarOpen ? "justify-between px-3 py-2" : "justify-center p-2",
+                  main === "doctor"
+                    ? "bg-gray-100 text-blue-600 border-l-4 border-blue-500"
+                    : "text-gray-600 hover:bg-gray-100"
+                )}
+              >
+                <div className={classNames("flex items-center", sidebarOpen && "gap-3")}>
+                  <FaUserMd className="w-5 h-5 shrink-0" />
+                  {sidebarOpen && <span className="truncate"> {role === "admin" ? "Doctor Management" : "Doctor Panel"}</span>}
+                </div>
+                {sidebarOpen &&
+                  (openMenu === "doctor" ? (
+                    <LuChevronUp className="w-4 h-4" />
+                  ) : (
+                    <LuChevronDown className="w-4 h-4" />
+                  ))}
+              </button>
+
+              {sidebarOpen && openMenu === "doctor" && (
+                <ul className="ml-5 text-gray-500">
+                  <li>
+                    <NavLink
+                      to={`/${encryptRoute("doctor")}/${encryptRoute("doctor")}`}
+                      className={({ isActive }) =>
+                        classNames("flex items-center text-sm cursor-pointer p-2 rounded", isActive ? "bg-gray-100" : "hover:bg-gray-100")
+                      }
+                    >
+                      <span className="w-3 h-3 rounded-full border-2 border-blue-500 mr-2"></span>
+                      Doctor
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to={`/${encryptRoute("doctor")}/${encryptRoute("doc-schedule")}`}
+                      className={({ isActive }) =>
+                        classNames("flex items-center text-sm cursor-pointer p-2 rounded", isActive ? "bg-gray-100" : "hover:bg-gray-100")
+                      }
+                    >
+                      <span className="w-3 h-3 rounded-full border-2 border-blue-500 mr-2"></span>
+                      Doctor Schedule
+                    </NavLink>
+                  </li>
+
+
+                  <li>
+                    <NavLink
+                      to={`/${encryptRoute("doctor")}/${encryptRoute("appointment")}`}
+                      className={({ isActive }) =>
+                        classNames("flex items-center text-sm cursor-pointer p-2 rounded", isActive ? "bg-gray-100" : "hover:bg-gray-100")
+                      }
+                    >
+                      <span className="w-3 h-3 rounded-full border-2 border-blue-500 mr-2"></span>
+                      Appointments
+                    </NavLink>
+                  </li>
+
+
+                </ul>
+              )}
+            </li>
+            )}
+
+
+
+            {/* Master Setup Menu */}
+             {(role === "admin")&&(
+            <li className="rounded-r">
+              <button
+                type="button"
+                onClick={() => setOpenMenu(openMenu === "master" ? null : "master")}
+                className={classNames(
+                  "w-full text-left flex items-center text-sm font-medium rounded-r",
+                  sidebarOpen ? "justify-between px-3 py-2" : "justify-center p-2",
+                  main === "master"
+                    ? "bg-gray-100 text-blue-600 border-l-4 border-blue-500"
+                    : "text-gray-600 hover:bg-gray-100"
+                )}
+              >
+                <div className={classNames("flex items-center", sidebarOpen && "gap-3")}>
+                  <FaUsersCog className="w-5 h-5 shrink-0" />
+                  {sidebarOpen && <span className="truncate">Master Setup</span>}
+                </div>
+                {sidebarOpen &&
+                  (openMenu === "master" ? (
+                    <LuChevronUp className="w-4 h-4" />
+                  ) : (
+                    <LuChevronDown className="w-4 h-4" />
+                  ))}
+              </button>
+
+              {sidebarOpen && openMenu === "master" && (
                 <ul className="ml-5 text-gray-500">
                   <li>
                     <NavLink
@@ -290,6 +416,23 @@ export default function DashboardLayout() {
                 </ul>
               )}
             </li>
+             )}
+            {/* End Master Setup Menu */}
+
+
+              
+
+ { role === "nurse" &&(
+            <NavItem
+              icon={FaUserInjured}
+              label="Patient"
+              to={`/${encryptRoute("patient")}`}
+              matchKey="patient"
+              sidebarOpen={sidebarOpen}
+            /> 
+ )}
+
+
           </ul>
         </nav>
       </aside>
@@ -392,7 +535,7 @@ export default function DashboardLayout() {
                         Change Password
                       </span>
                     </button>
-                    <button  onClick={handleLogout} className="w-full flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2">
+                    <button onClick={handleLogout} className="w-full flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2">
                       <LuLogOut className="text-lg" />
                       <span className="text-[15px] text-gray-500">Logout</span>
                     </button>

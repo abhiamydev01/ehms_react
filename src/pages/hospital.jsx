@@ -19,7 +19,7 @@ const TransactionsTable = () => {
     const fetchTransactions = async () => {
         setLoading(true);
         try {
-            
+
             const response = await ApiService.getAllHospitals();
             const result = response.data?.data || [];;
 
@@ -50,7 +50,7 @@ const TransactionsTable = () => {
             (item) =>
                 item.hospital_name?.toLowerCase().includes(value.toLowerCase()) ||
                 item.hospital_code?.toLowerCase().includes(value.toLowerCase()) ||
-                item.contact_number?.toLowerCase().includes(value.toLowerCase()) 
+                item.contact_number?.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredData(filtered);
         setTotalRows(filtered.length);
@@ -60,7 +60,7 @@ const TransactionsTable = () => {
     const columns = [
         { name: "Code", selector: (row) => row.hospital_code, sortable: true },
         { name: "Name", selector: (row) => row.hospital_name, sortable: true },
-         { name: "Contact", selector: (row) => row.contact_number, sortable: true },
+        { name: "Contact", selector: (row) => row.contact_number, sortable: true },
         { name: "Email", selector: (row) => row.email },
         { name: "Timezone", selector: (row) => row.timezone },
         { name: "Status", cell: () => <StatusBadge status={"Active"} /> },
@@ -90,30 +90,30 @@ const TransactionsTable = () => {
                 <NavLink
                     to={`/${encryptRoute("master")}/${encryptRoute("create-hospital")}`}
                 >
-                <button className="bg-blue-500 text-white px-2 py-1 rounded-sm hover:border border-blue-500 hover:text-blue-500 hover:bg-transparent cursor-pointer flex items-center justify-center gap-1">
-                    <LuCirclePlus />
-                    <span className="text-sm font-medium">Add</span>
-                </button>
+                    <button className="bg-blue-500 text-white px-2 py-1 rounded-sm hover:border border-blue-500 hover:text-blue-500 hover:bg-transparent cursor-pointer flex items-center justify-center gap-1">
+                        <LuCirclePlus />
+                        <span className="text-sm font-medium">Add</span>
+                    </button>
                 </NavLink>
             </div>
 
             {loading ? (
                 <Loader />
             ) : (
-            <CustomDataTable
-                columns={columns}
-                data={filteredData.slice((page - 1) * perPage, page * perPage)}
-                pagination
-                paginationServer={false}
-                paginationTotalRows={totalRows}
-                progressPending={loading}
-                onPageChange={(p) => setPage(p)}
-                onPerRowsChange={(newPerPage) => {
-                    setPerPage(newPerPage);
-                    setPage(1);
-                }}
-            />
-             )}
+                <CustomDataTable
+                    columns={columns}
+                    data={filteredData.slice((page - 1) * perPage, page * perPage)}
+                    pagination
+                    paginationServer={false}
+                    paginationTotalRows={totalRows}
+                    progressPending={loading}
+                    onPageChange={(p) => setPage(p)}
+                    onPerRowsChange={(newPerPage) => {
+                        setPerPage(newPerPage);
+                        setPage(1);
+                    }}
+                />
+            )}
         </div>
 
     );
